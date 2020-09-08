@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="96x96" href="https://raw.githubusercontent.com/directorcn/links/master/docs/static/favicon.png">
     <title>Realm</title>
     <style>
         html,
@@ -241,6 +242,12 @@
 
         let graph = init();
         graph.on('node:click', handleNodeClick);
+        document.addEventListener('visibilitychange', event => {
+            if (document.visibilityState === 'hidden')
+                graph.off('node:click', handleNodeClick);
+            else
+                graph.on('node:click', handleNodeClick);
+        })
     </script>
 </body>
 </html>

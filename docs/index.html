@@ -133,12 +133,15 @@
         });
 
         function go(event) {
+            event.bubbles = false; // 阻止冒泡
             let item = event.item;
             let path = item && item.get('model').path;
             if (path)
                 window.open(path);
         }
+
         graph.on('node:contextmenu', go);
+        graph.on('touchend', go);
 
         G6.Util.traverseTree(data, function (item) {
             item.id = item.name;
@@ -147,7 +150,16 @@
         graph.data(data);
         graph.render();
         graph.fitView();
-        console.info('> 右键进行页面跳转')
+        console.info('> 右键进行页面跳转');
+        document.addEventListener('visibilitychange', event => {
+            if (document.visibilityState === 'hidden') {
+                graph.off('node:contextmenu', go);
+                graph.off('touchend', go);
+            } else {
+                graph.on('node:contextmenu', go);
+                graph.on('touchend', go);
+            }
+        })
     </script>
 </body>
 </html> 

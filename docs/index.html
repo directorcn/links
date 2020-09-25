@@ -4,12 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" sizes="96x96" href="https://raw.githubusercontent.com/directorcn/links/master/docs/static/favicon.png">
-    <title>Home</title>
+    <title>FrontEndMap</title>
+    <style>
+        html,
+        body,
+        #container {
+            width: 100%;
+            height: 100%;
+            background-color: #f5f5f5;
+        }
+    </style>
 </head>
 <body>
     <div id="container"></div>
     <script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.g6-3.7.0/dist/g6.min.js"></script>
+    <script src="./data/JavaScript.js"></script>
+    <script src="./data//HTML.js"></script>
+    <script src="./data/CSS.js"></script>
+    <script src="./data/API.js"></script>
     <script>
+        const tooltip = new G6.Tooltip({
+            offsetX: 0,
+            offsetY: 0,
+            itemTypes: ['node'],
+            getContent(e) {
+                const item = e.item.get('model');
+                const fragment = item.fragment;
+                if (fragment) {
+                    const outDiv = document.createElement('ul');
+                    outDiv.style.width = '180px';
+                    const s = fragment.split('|');
+                    let fm = document.createDocumentFragment();
+                    for (let c of s) {
+                        let li = document.createElement('li');
+                        li.style.lineHeight = '20px';
+                        li.innerHTML = c;
+                        fm.appendChild(li);
+                    }
+                    outDiv.appendChild(fm);
+                    return outDiv;
+                }
+            }
+        });
+
         G6.registerNode(
             'tree-node',
             {
@@ -29,7 +66,7 @@
                         y: 0,
                         textAlign: 'left',
                         textBaseline: 'middle',
-                            fill: 'orange',
+                            fill: 'orange'
                         },
                         name: 'rect-shape',
                     });
@@ -62,14 +99,23 @@
 
         const width = document.getElementById('container').scrollWidth;
         const height = document.getElementById('container').scrollHeight || 500;
-        
+
         const data = {
-            name: 'director',
+            id: 'FrontEndMap',
+            name: 'FrontEndMap',
             path: void 0,
             children: [
                 {
-                    name: 'global Object',
-                    path: './static/global.html'            
+                    ...JavaScript
+                },
+                {
+                    ...HTML
+                },
+                {
+                    ...CSS
+                },
+                {
+                    ...API
                 }
             ]
         };
@@ -103,7 +149,7 @@
                 anchorPoints: [
                     [0, 0.5],
                     [1, 0.5],
-                ],
+                ]
             },
             defaultEdge: {
                 type: 'cubic-horizontal',
@@ -130,6 +176,7 @@
                     return 80;
                 },
             },
+            plugins: [tooltip]
         });
 
         function go(event) {
@@ -142,15 +189,22 @@
 
         graph.on('node:contextmenu', go);
         graph.on('touchend', go);
+        graph.on('node:click', handleNodeClick);
 
         G6.Util.traverseTree(data, function (item) {
-            item.id = item.name;
+            item.collapsed = item.id.split('|').length > 2;
         });
 
         graph.data(data);
         graph.render();
         graph.fitView();
-        console.info('> 右键进行页面跳转');
+        console.info(
+`
+┼────────────────────────────┼
+   右键进行页面跳转/菜单查看     
+┼────────────────────────────┼
+
+`);
         document.addEventListener('visibilitychange', event => {
             if (document.visibilityState === 'hidden') {
                 graph.off('node:contextmenu', go);
@@ -159,7 +213,43 @@
                 graph.on('node:contextmenu', go);
                 graph.on('touchend', go);
             }
-        })
+        });
+
+        function handleNodeClick(event) {
+            var item = event.item;
+            // 聚焦当前点击的节点（把节点放到视口中心）
+            var matrix = item.get('group').getMatrix();
+            var point = {
+                x: matrix[6],
+                y: matrix[7]
+            };
+            var width = graph.get('width');
+            var height = graph.get('height');
+            // 找到视口中心
+            var viewCenter = {
+                x: width / 3,
+                y: height / 3
+            };
+            var modelCenter = graph.getPointByCanvas(viewCenter.x, viewCenter.y);
+            var viewportMatrix = graph.get('group').getMatrix();
+            // 画布平移的目标位置，最终目标是graph.translate(dx, dy);
+            var dx = (modelCenter.x - point.x) * viewportMatrix[0];
+            var dy = (modelCenter.y - point.y) * viewportMatrix[4];
+            var lastX = 0;
+            var lastY = 0;
+            var newX = void 0;
+            var newY = void 0;
+            // 动画每次平移一点，直到目标位置
+            graph.get('canvas').animate({
+                onFrame: function onFrame(ratio) {
+                    newX = dx * ratio;
+                    newY = dy * ratio;
+                    graph.translate(newX - lastX, newY - lastY);
+                    lastX = newX;
+                    lastY = newY;
+                }
+            }, 300, 'easeCubic');
+        }
     </script>
 </body>
 </html> 

@@ -56,7 +56,7 @@ const HTML = {
         {
           id: 'FrontEndMap|HTML|SGML|Entity',
           name: 'Entity',
-          path: '',
+          path: 'https://directorcn.github.io/links/data/Entity.html',
         }
       ]
     },
@@ -85,7 +85,7 @@ const HTML = {
         {
           id: 'FrontEndMap|HTML|XML|Tag',
           name: 'Tag',
-          path: '',
+          path: 'https://directorcn.github.io/links/data/Tag.html',
         }
       ]
     },

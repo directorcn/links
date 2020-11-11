@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="96x96" href="https://raw.githubusercontent.com/directorcn/links/master/docs/static/favicon.png">
     <title>图片懒加载</title>
     <style>
         div {
@@ -34,7 +35,7 @@
         function init() {
             let imgList = document.getElementsByClassName('img');
             for (let i = 0; i < imgList.length; i ++) {
-                // 浏览器窗口距 top 位置
+                // 浏览器窗口 top 值
                 let windowTop = document.documentElement.clientTop;
                 // 浏览器窗口高度
                 let windowHeight = document.documentElement.clientHeight;

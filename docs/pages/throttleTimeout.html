@@ -33,6 +33,7 @@
     function handleReset() {
         btn.addEventListener('click', function() {
             container.innerText = 'mousemove here';
+            count= 0;
             container.removeEventListener('mousemove', handler);
         });
     }

@@ -1,0 +1,69 @@
+<style>
+    #container {
+        width: 100%;
+        height: 300px;
+        outline: 1px dashed orange;
+        text-align: center;
+        line-height: 300px;
+        font-size: 28px;
+    }
+    button {
+        padding: 4px 14px;
+        background: none;
+        outline: none;
+        margin-top: 20px;
+        border: 1px solid orange;
+        border-radius: 4px;
+    }
+</style>
+<div id="container">mousemove here</div>
+<button>reset</button>
+
+<script>
+    let count = 0;
+    const container = document.getElementById('container');
+    const btn = document.getElementsByTagName('button')[0];
+    function move(callback) {
+        container.addEventListener('mousemove', callback); 
+    }
+
+    function handler() {
+        container.innerText = count ++;
+    }
+    function handleReset() {
+        btn.addEventListener('click', function() {
+            container.innerText = 'mousemove here';
+            container.removeEventListener('mousemove', handler);
+        });
+    }
+    /**
+     * @param {Function} fn
+     * @param {Number} delay 延迟时间
+     * @param {Boolean} immediate 是否立即执行
+     */
+    function debounce(fn, delay, immediate) {
+        let timer = null;
+        return function() {
+            let context = this;
+            let args = arguments;
+            let result;
+            if (timer)
+                clearTimeout(timer);
+            if (immediate) {
+                let called = !timer;
+                timer = setTimeout(() => {
+                    timer = null;
+                }, delay);
+                if (called)
+                    result = fn.apply(context, args);
+            } else {
+                timer = setTimeout(() => {
+                    fn.apply(context, args)
+                }, delay);
+            }
+            return result;
+        }
+    }
+    move(debounce(handler, 1000, true));
+    handleReset();
+</script>

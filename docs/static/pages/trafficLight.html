@@ -1,0 +1,61 @@
+<style>
+    .container {
+        width: 350px;
+        height: 100px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .container > div {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        font-size: 28px;
+        text-align: center;
+        line-height: 100px;
+        color: white;
+    }
+    .gray {
+        background: gray;
+    }
+    .red {
+        background: red;
+    }
+    .green {
+        background: green;
+    }
+    .yellow {
+        background: yellow;
+    }
+</style>
+<div class="container">
+    <div class="gray red"></div>
+    <div class="gray"></div>
+    <div class="gray"></div>
+</div>
+<script>
+    let children = document.getElementsByClassName('container')[0].children;
+    function changeRed() {
+        children[2].classList.remove('yellow');
+        children[0].classList.add('red');
+    }
+    function changeGreen() {
+        children[0].classList.remove('red');
+        children[1].classList.add('green');
+    }
+    function changeYellow() {
+        children[1].classList.remove('green');
+        children[2].classList.add('yellow');
+    }
+    function run() {
+        changeRed();
+        setTimeout(() => {
+            changeGreen();
+            setTimeout(() => {
+                changeYellow()
+                setTimeout(run, 3000);
+            }, 10000);
+        }, 5000);
+    }
+    run();
+</script>
